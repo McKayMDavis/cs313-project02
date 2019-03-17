@@ -5,7 +5,11 @@ function displayHome(req, res) {
 }
 
 function displayData(req, res) {
-	model.pullData();
+	model.pullData("something", (rows) => {
+		console.log(rows.keys());
+		//rows = parseTable(rows);
+		res.render("vizWindow.ejs", { data: rows[0] });
+	});
 }
 
 
