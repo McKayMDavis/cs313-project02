@@ -11,86 +11,87 @@
   	<link rel="stylesheet" type="text/css" href="custom.css">
 </head>
 <body>
-
-
-<h1 class='heading'>Data Visualization App</h1>
-<nav class='navbar navbar-inverse'>
-	<div class='container-fluid'>
-		<div class='navbar-header'>
-			<button type='button' class='navbar-toggle' data-toggle='collapse' data-target='#myNavbar'>
-				<span class='icon-bar'></span>
-				<span class='icon-bar'></span>
-				<span class='icon-bar'></span> 
-			</button>
+	
+	<h1 class='heading'>Data Visualization App</h1>
+	<nav class='navbar navbar-inverse'>
+		<div class='container-fluid'>
+			<div class='navbar-header'>
+				<button type='button' class='navbar-toggle' data-toggle='collapse' data-target='#myNavbar'>
+					<span class='icon-bar'></span>
+					<span class='icon-bar'></span>
+					<span class='icon-bar'></span> 
+				</button>
+			</div>
+			<div class='collapse navbar-collapse' id='myNavbar'>
+				<ul class='nav navbar-nav'>
+					<li><a id="viz" href=''>Visualize</a></li>
+					<li><a id="addRows" href=''>Enter Data</a></li>
+					<li><a id="addUser" href=''>Register a User</a></li>
+				</ul>
+				<ul class='nav navbar-nav navbar-right'>
+					<li><a id="logout" href='/'><span class='glyphicon glyphicon-log-out'></span> Logout</a></li>
+				</ul>
+			</div>
 		</div>
-		<div class='collapse navbar-collapse' id='myNavbar'>
-			<ul class='nav navbar-nav'>
-				<li><a href='app.php'>Visualize</a></li>
-				<li><a href='enter.php'>Enter Data</a></li>
-				<li><a href='register.php'>Register a User</a></li>
-			</ul>
-			<ul class='nav navbar-nav navbar-right'>
-				<li><a href='logout.php'><span class='glyphicon glyphicon-log-out'></span> Logout</a></li>
-			</ul>
-		</div>
-	</div>
-</nav>
+	</nav>
 
-
-	<div class="container-fluid">
+	<div id="page-container">
 		<div class="row">
-			<div id="nav" class="col-sm-3 navigator">
-				<form id="data-entry" action="/displayData" method="POST">
+			<div class="container-fluid">
+				<h2 class="text-center">Welcome! Please Log In:</h2>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-4"></div>
+			<div class="col-sm-4">
+				<form id="login" action="login_db.php" method="POST">
 					<div class="form-group">
-						<label for="data-type">Category:</label>
-						<select name="data-type" class="form-control">
-							<!--<option value="goal">Goals</option>-->
-							<option value="expense">Expenses</option>
-							<option value="revenue">Revenue</option>
-						</select>
+						<label for="username">Username:</label>
+						<input type="text" class="form-control" id="username" placeholder="Enter username" name="username" autocomplete="off">
 					</div>
 					<div class="form-group">
-						<label for="year">Year:</label>
-						<select name="year" class="form-control">
-							<option value="2016">2016</option>
-						</select>
+						<label for="password">Password:</label>
+						<input type="password" class="form-control" id="password" placeholder="Enter password" name="password">
 					</div>
-					<input type="submit" value="View">
+					<input type="submit" value="Login">
 				</form>
 			</div>
-			<div class="col-sm-8">
-				<div id="loader" class="loader"></div>
-				<div id="plot-window"></div>
-			</div>
-
+			<div class="col-sm-4"></div>
 		</div>
 	</div>
-
 	<script type="text/javascript">
-		var frm = $('#data-entry');
+		$('#viz').click(function(e) {
+			e.preventDefault();
+			$.ajax({
+				url: "/viz",
+				type: "GET",
+				success: function (data) {
+					$('#page-container').html(data);
+				}
+			});
+		});
 
-	    frm.submit(function (e) {
-	    	console.log("Submitting form");
-	        e.preventDefault();
-	        $('#loader').show();
-	        $('#plot-window').hide();
+		$('#addRows').click(function(e) {
+			e.preventDefault();
+			$.ajax({
+				url: "/addRows",
+				type: "GET",
+				success: function (data) {
+					$('#page-container').html(data);
+				}
+			});
+		});
 
-	        $.ajax({
-	            type: frm.attr('method'),
-	            url: frm.attr('action'),
-	            data: frm.serialize(),
-	            success: function (data) {
-	            	console.log("Success 1");
-		    		$('#loader').hide();
-		    		$("#plot-window").html(data);
-		    		$('#plot-window').show();
-	            },
-	            error: function (data) {
-	                console.log('An error occurred.');
-	                console.log(data);
-	            },
-	        });
-	    });
+		$('#addUser').click(function(e) {
+			e.preventDefault();
+			$.ajax({
+				url: "/addUser",
+				type: "GET",
+				success: function (data) {
+					$('#page-container').html(data);
+				}
+			});
+		});
 	</script>
 </body>
 </html>

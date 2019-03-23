@@ -11,7 +11,12 @@ app.set("view engine", "ejs");
 /***********
 Web Services
 ***********/
-app.get('/', controller.displayHome);
+app.get('/', controller.displayLogin);
+//app.get('/header', controller.displayHeader);
+app.get('/viz', controller.displayViz);
+app.get('/addRows', controller.displayAddRows);
+app.get('/addUser', controller.displayAddUser);
 app.post('/displayData', controller.displayData);
+//app.post('/displayAddRowsTable', controller.displayAddRowsTable);
 
 app.listen(port, () => console.log("Server running"));
