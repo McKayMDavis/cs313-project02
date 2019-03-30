@@ -29,7 +29,7 @@
 					<li><a id="addUser" href=''>Register a User</a></li>
 				</ul>
 				<ul class='nav navbar-nav navbar-right'>
-					<li><a id="logout" href='/'><span class='glyphicon glyphicon-log-out'></span> Logout</a></li>
+					<li><a id="logout" href=''><span class='glyphicon glyphicon-log-out'></span> Logout</a></li>
 				</ul>
 			</div>
 		</div>
@@ -44,7 +44,7 @@
 		<div class="row">
 			<div class="col-sm-4"></div>
 			<div class="col-sm-4">
-				<form id="login" action="login_db.php" method="POST">
+				<form id="login" action="/login" method="POST">
 					<div class="form-group">
 						<label for="username">Username:</label>
 						<input type="text" class="form-control" id="username" placeholder="Enter username" name="username" autocomplete="off">
@@ -60,6 +60,19 @@
 		</div>
 	</div>
 	<script type="text/javascript">
+		var frm = $('#login');
+		frm.submit(function (e) {
+	        e.preventDefault();
+	        $.ajax({
+	            type: frm.attr('method'),
+	            url: frm.attr('action'),
+	            data: frm.serialize(),
+	            success: function (data) {
+	            	$('#page-container').html(data);
+	            }
+			});
+		});
+
 		$('#viz').click(function(e) {
 			e.preventDefault();
 			$.ajax({
@@ -89,6 +102,18 @@
 				type: "GET",
 				success: function (data) {
 					$('#page-container').html(data);
+				}
+			});
+		});
+
+		$('#logout').click(function(e) {
+			e.preventDefault();
+			$.ajax({
+				url: "/logout",
+				type: "GET",
+				success: function (data) {
+					console.log("Logout Successfull");
+					location.reload();
 				}
 			});
 		});
