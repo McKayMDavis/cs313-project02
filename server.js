@@ -29,19 +29,34 @@ function checkLogin(req, res, next) {
 	}
 }
 
+function checkAdmin(req, res, next) {
+	if (req.session.utype == 1) {
+		next();
+	} else {
+		res.status(401).json({success: false, message: 'User not authorized.'});
+	}
+}
+
 /***********
 Web Services
 ***********/
+//Login stuff
 app.post('/login', controller.login);
 app.get('/logout', controller.logout);
 
-
+//Display stuff
 app.get('/', checkLogin, controller.displayLogin);
 //app.get('/header', controller.displayHeader);
 app.get('/viz', checkLogin, controller.displayViz);
 app.get('/addRows', checkLogin, controller.displayAddRows);
-app.get('/addUser', checkLogin, controller.displayAddUser);
+app.get('/addUser', checkLogin, checkAdmin, controller.displayAddUser);
 app.post('/displayData', checkLogin, controller.displayData);
-//app.post('/displayAddRowsTable', controller.displayAddRowsTable);
+app.post('/displayAddRowsTable', controller.displayAddRowsTable);
+
+//DB push stuff
+app.post('/putUser', checkLogin, checkAdmin, controller.putUser);
+app.post('/putRows', checkLogin, controller.putRows);
+
+
 
 app.listen(port, () => console.log("Server running"));

@@ -10,10 +10,14 @@
   "author": "McKay Davis",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^3.0.5",
     "dotenv": "^7.0.0",
     "ejs": "^2.6.1",
     "express": "^4.16.4",
     "express-session": "^1.15.6",
-    "pg": "^7.8.2"
+    "fast-csv": "^2.4.1",
+    "node-cmd": "^3.0.0",
+    "pg": "^7.8.2",
+    "r-script": "0.0.3"
   }
 }

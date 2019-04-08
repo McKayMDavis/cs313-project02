@@ -1,0 +1,3 @@
+expense_id,description,vendor,amount,year,date_entered,last_update
+1,An expense,Target,10,2018,Sun Jan 14 2018 00:00:00 GMT-0700 (Mountain Standard Time),1
+2,Cookies,Cookie Monster,10,2018,Sun Jan 14 2018 00:00:00 GMT-0700 (Mountain Standard Time),1

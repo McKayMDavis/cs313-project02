@@ -22,21 +22,6 @@
 		<div class="col-sm-8">
 			<div id="loader" class="loader"></div>
 			<div id="plot-window" hidden="hidden">
-				<ul class='nav nav-tabs'>
-					<li class='active'><a data-toggle='tab' href='#data'>Table</a></li>
-					<li><a data-toggle='tab' href='#plot'>Visual</a></li>
-				</ul>
-
-				<div class='tab-content'>
-					<div id='data' class='tab-pane fade in active'>
-						<table id="dt" class='table table-bordered' style='width:100%'>
-
-						</table>
-					</div>
-					<div id='data' class='tab-pane fade'>";
-
-					</div>
-				</div>
 			</div>
 		</div>
 	</div>
@@ -48,6 +33,7 @@
     frm.submit(function (e) {
     	console.log("Submitting form");
         e.preventDefault();
+		$('#plot-window').hide();
         $('#loader').show();
 
         $.ajax({
@@ -55,11 +41,7 @@
             url: frm.attr('action'),
             data: frm.serialize(),
             success: function (data) {
-            	console.log("Success 1");
-            	console.log(data);
-	    		$("#dt").html(data.forEach(function(i) {
-	    			JSON.stringify(i);
-	    		}));
+	    		$('#plot-window').html(data);
 	    		$('#loader').hide();
 	    		$('#plot-window').show();
             },

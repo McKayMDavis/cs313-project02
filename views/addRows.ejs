@@ -3,8 +3,8 @@
 		<div id="nav" class="col-sm-3 navigator">
 			<form id="data-entry" action="/displayAddRowsTable" method="POST">
 				<div class="form-group">
-					<label for="data-type">Category:</label>
-					<select name="data-type" class="form-control">
+					<label for="dtype">Category:</label>
+					<select name="dtype" class="form-control">
 						<!-- <option value="goal">Goals</option> -->
 						<option value="expense">Expenses</option>
 						<option value="revenue">Revenue</option>
@@ -39,9 +39,8 @@
             url: frm.attr('action'),
             data: frm.serialize(),
             success: function (data) {
-            	console.log("Success 1");
-	    		$('#loader').hide();
 	    		$("#plot-window").html(data);
+	    		$('#loader').hide();
 	    		$('#plot-window').show();
             },
             error: function (data) {
