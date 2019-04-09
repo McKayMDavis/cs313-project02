@@ -18,6 +18,9 @@ app.set("view engine", "ejs");
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
+const nodeCleanup = require('node-cleanup');
+const fs = require('fs');
+
 /**********************
 Login Check Middleware
 **********************/
@@ -57,6 +60,20 @@ app.post('/displayAddRowsTable', controller.displayAddRowsTable);
 app.post('/putUser', checkLogin, checkAdmin, controller.putUser);
 app.post('/putRows', checkLogin, controller.putRows);
 
-
+/***********************
+Cleanup! Scrubba-dub-dub
+************************/
+nodeCleanup((exitCode, signal) => {
+	if (fs.existsSync("./public/temp.csv")) {
+		fs.unlink("./public/temp.csv", (err) => {
+			if (err) throw err;
+		});
+	}
+	if (fs.existsSync("./public/temp.png")) {
+		fs.unlink("./public/temp.png", (err) => {
+			if (err) throw err;
+		});
+	}
+});
 
 app.listen(port, () => console.log("Server running"));

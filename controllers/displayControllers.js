@@ -1,10 +1,9 @@
 const model = require("../models/dataManipulation.js");
+const utils = require("../utils/utils.js");
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const fastcsv = require('fast-csv');
 const fs = require('fs');
-const ws = fs.createWriteStream('./public/temp.csv');
-const cmd = require('node-cmd');
 
 // These functions are for displaying pages
 function displayLogin(req, res) {
@@ -47,12 +46,25 @@ function displayData(req, res) {
 
 	model.pullData(query, (rows) => {
 		console.log(rows);
+		if (fs.existsSync("./public/temp.csv")) {
+			fs.unlink("./public/temp.csv", (err) => {
+				if (err) throw err;
+				console.log("csv deleted");
+			});
+		}
+		if (fs.existsSync("./public/temp.png")) {
+			fs.unlink("./public/temp.png", (err) => {
+				if (err) throw err;
+				console.log("png deleted");
+			});
+		}
+		var ws = fs.createWriteStream('./public/temp.csv');
 		fastcsv
 			.write(rows, { headers: true })
 			.pipe(ws);
-		var table = json2table(rows, 'table table-bordered');
-		plotR('./public/temp.csv', (plot) => {
-			var output = tablePlot(table, plot);
+		var table = utils.json2table(rows, 'table table-bordered');
+		utils.plotR('Rscript ./public/plots.R', (plot) => {
+			var output = utils.tablePlot(table, plot);
 			res.send(output);
 		});
 	});
@@ -69,7 +81,7 @@ function displayAddRowsTable(req, res) {
 	model.pullData(query, (rows) => {
 		req.session.nrow = nrow;
 		req.session.dtype = tab;
-		var table = json2formTable(rows, nrow, 'table table-bordered');
+		var table = utils.json2formTable(rows, nrow, 'table table-bordered');
 		res.send(table);
 	});
 }
@@ -175,98 +187,6 @@ function putRows(req, res) {
 			});
 		}
 	}
-}
-
-
-// UTILS SPLIT THIS OUT INTO ANOTHER FILE
-function json2table(json, classes) {
-	var cols = Object.keys(json[0]);
-	var headerRow = '';
-	var bodyRows = '';
-	classes = classes || '';
-
-	cols.map(function(col) {
-		headerRow += '<th>' + capitalizeFirstLetter(col) + '</th>';
-	});
-
-	json.map(function(row) {
-		bodyRows += '<tr>';
-
-		cols.map(function(colName) {
-			bodyRows += '<td>' + row[colName] + '</td>';
-		});
-
-		bodyRows += '</tr>';
-	});
-
-	return '<table class="' +
-		classes +
-		'"><thead><tr>' +
-		headerRow +
-		'</tr></thead><tbody>' +
-		bodyRows +
-		'</tbody></table>';
-}
-
-function json2formTable(json, nrow, classes) {
-	var cols = Object.keys(json[0]);
-	var headerRow = '';
-	var bodyRows = '';
-	classes = classes || '';
-
-	json.map(function(row) {
-		cols.map(function(colName) {
-			if (!row[colName].includes('id') && !row[colName].includes('last_update') && !row[colName].includes('date_entered')) {
-				headerRow += '<th>' + capitalizeFirstLetter(row[colName]) + '</th>';
-			}
-		});
-	});
-
-	for (i = 0; i < nrow; i++) {
-		bodyRows += '<tr>';
-		for (j = 0; j < 4; j++) {
-			bodyRows += '<td><input type="text" name="dat[' + i + '][' + j + ']"></td>';
-		}
-		bodyRows += '</tr>';
-	}
-
-	return '<form id="enter" action="/putRows" method="POST" autocomplete="off">' +
-		'<table class="' +
-		classes +
-		'"><thead><tr>' +
-		headerRow +
-		'</tr></thead><tbody>' +
-		bodyRows +
-		'</tbody></table>' +
-		'<input type="submit" value="Add Rows"></form>';
-}
-
-function capitalizeFirstLetter(string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
-}
-
-function plotR(path, callback) {
-	cmd.get(
-        'Rscript ./public/plots.R',
-        function(err, data, stderr){
-            callback("<img src='temp.png' alt='Plot Image' style='width:100%;'></img>");
-        }
-    );
-}
-
-function tablePlot(table, plot) {
-	return "<ul class='nav nav-tabs'>\
-						<li class='active'><a data-toggle='tab' href='#data'>Table</a></li>\
-						<li><a data-toggle='tab' href='#plot'>Visual</a></li>\
-					</ul>\
-					<div class='tab-content'>\
-						<div id='data' class='tab-pane fade in active'>" +
-							table +
-						"</div>\
-						<div id='plot' class='tab-pane fade'>" +
-							plot +
-						"</div>\
-					</div>";
 }
 
 
