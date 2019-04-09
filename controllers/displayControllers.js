@@ -49,7 +49,7 @@ function displayData(req, res) {
 		}
 	} else if (tab == 'revenue') {
 		var query = {
-			text: 'SELECT expense_id, description, vendor, amount, year, date_entered, last_update FROM revenue WHERE year = $1',
+			text: 'SELECT revenue_id, description, client, amount, year, date_entered, last_update FROM revenue WHERE year = $1',
 			values: [year]
 		}
 	}
