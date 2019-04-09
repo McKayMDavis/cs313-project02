@@ -5,6 +5,16 @@ const saltRounds = 10;
 const fastcsv = require('fast-csv');
 const fs = require('fs');
 
+if (process.env.PORT) {
+	var csvPath = '/app/public/temp.csv';
+	var pngPath = '/app/public/temp.png';
+	var command = '/app/bin/Rscript /app/public/plots.R /app/public/temp.csv /app/public/ temp.png';
+} else {
+	var csvPath = './public/temp.csv';
+	var pngPath = './public/temp.png';
+	var command = 'Rscript ./public/plots.R ./public/temp.csv ./public/ temp.png';
+}
+
 // These functions are for displaying pages
 function displayLogin(req, res) {
 	res.sendFile(path.join(__dirname, './public/index.html'));
@@ -46,24 +56,24 @@ function displayData(req, res) {
 
 	model.pullData(query, (rows) => {
 		console.log(rows);
-		if (fs.existsSync("./public/temp.csv")) {
-			fs.unlink("./public/temp.csv", (err) => {
+		if (fs.existsSync(csvPath)) {
+			fs.unlink(csvPath, (err) => {
 				if (err) throw err;
 				console.log("csv deleted");
 			});
 		}
-		if (fs.existsSync("./public/temp.png")) {
-			fs.unlink("./public/temp.png", (err) => {
+		if (fs.existsSync(pngPath)) {
+			fs.unlink(pngPath, (err) => {
 				if (err) throw err;
 				console.log("png deleted");
 			});
 		}
-		var ws = fs.createWriteStream('./public/temp.csv');
+		var ws = fs.createWriteStream(csvPath);
 		fastcsv
 			.write(rows, { headers: true })
 			.pipe(ws);
 		var table = utils.json2table(rows, 'table table-bordered');
-		utils.plotR('Rscript ./public/plots.R', (plot) => {
+		utils.plotR(command, (plot) => {
 			var output = utils.tablePlot(table, plot);
 			res.send(output);
 		});
